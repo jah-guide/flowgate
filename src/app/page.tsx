@@ -15,18 +15,19 @@ export default function HomePage() {
 
   return (
     <AppShell
+      eyebrow="Live posture"
       title="Operations control board"
-      subtitle="Track service requests from intake through triage and dual approval, with live SLA posture for open work."
+      subtitle="Intake, triage, and dual approval with SLA badges on every open ticket."
     >
       <div className="hero-grid">
-        <section className="card">
-          <h2>Today&apos;s posture</h2>
+        <section className="card card-accent">
+          <h2>Queue snapshot</h2>
           <p className="muted">
-            FlowGate models a shared-services intake desk where every ticket carries a priority-based
-            resolution clock and explicit approval gates.
+            Counts refresh from the in-memory store — same data as the requests list and detail
+            actions.
           </p>
           <div className="stat-grid">
-            <div className="stat">
+            <div className="stat stat-accent">
               <strong>{open.length}</strong>
               <span>Open requests</span>
             </div>
@@ -34,42 +35,43 @@ export default function HomePage() {
               <strong>{awaitingApproval.length}</strong>
               <span>Awaiting approval</span>
             </div>
-            <div className="stat">
+            <div className="stat stat-warn">
               <strong>{atRisk.length}</strong>
               <span>SLA at risk</span>
             </div>
-            <div className="stat">
+            <div className="stat stat-danger">
               <strong>{breached.length}</strong>
               <span>SLA breached</span>
             </div>
           </div>
         </section>
         <section className="card">
-          <h2>Demo paths</h2>
-          <p className="muted">Walk the happy path or stress-test breach visibility.</p>
-          <ol className="muted" style={{ paddingLeft: "1.1rem", margin: 0 }}>
-            <li>Create a P1 request and triage it from the detail page.</li>
+          <h2>Demo walkthrough</h2>
+          <p className="muted">Three minutes to show intake → approval → breach visibility.</p>
+          <ol className="demo-steps">
+            <li>Create a P1 from <strong>New request</strong>, then triage on the detail page.</li>
             <li>Approve as manager, then director.</li>
-            <li>Open SR-0975 to see an overdue submitted ticket.</li>
+            <li>Open seeded <strong>SR-0975</strong> for a breached submitted ticket.</li>
           </ol>
-          <p style={{ marginTop: "0.85rem" }}>
+          <p style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             <Link href="/requests/new" className="button">
               Start new request
+            </Link>
+            <Link href="/requests" className="button button-ghost">
+              Full queue
             </Link>
           </p>
         </section>
       </div>
 
       <section>
-        <div className="page-header" style={{ marginBottom: "0.75rem" }}>
-          <h1 style={{ fontSize: "1.15rem" }}>Recent requests</h1>
-        </div>
-        <RequestTable requests={requests.slice(0, 6)} />
-        <p style={{ marginTop: "0.75rem" }}>
+        <div className="table-toolbar">
+          <h2>Recent requests</h2>
           <Link href="/requests" className="row-link">
-            View all requests →
+            View all →
           </Link>
-        </p>
+        </div>
+        <RequestTable requests={requests.slice(0, 6)} caption="Latest six tickets" />
       </section>
     </AppShell>
   );
