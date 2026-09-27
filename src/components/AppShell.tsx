@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { resetDemoAction } from "@/lib/actions";
+import { NavLinks } from "./NavLinks";
 
 export function AppShell({
   children,
   title,
   subtitle,
+  eyebrow,
 }: {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;
+  eyebrow?: string;
 }) {
   return (
     <div className="shell">
@@ -18,20 +21,16 @@ export function AppShell({
             <span className="brand-mark" aria-hidden />
             <span>
               <strong>FlowGate</strong>
-              <small>Ops &amp; SLA workflow</small>
+              <small>Ops control board</small>
             </span>
           </Link>
-          <nav className="nav">
-            <Link href="/requests">Requests</Link>
-            <Link href="/requests/new" className="nav-cta">
-              New request
-            </Link>
-          </nav>
+          <NavLinks />
         </div>
       </header>
       <main className="main">
         {(title || subtitle) && (
           <div className="page-header">
+            {eyebrow && <span className="page-eyebrow">{eyebrow}</span>}
             {title && <h1>{title}</h1>}
             {subtitle && <p>{subtitle}</p>}
           </div>
@@ -39,7 +38,7 @@ export function AppShell({
         {children}
       </main>
       <footer className="footer">
-        <span>Portfolio demo — in-memory data, no production auth</span>
+        <span>Portfolio demo — in-memory store, no production auth</span>
         <form action={resetDemoAction}>
           <button type="submit" className="link-button">
             Reset demo data
