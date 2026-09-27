@@ -2,118 +2,70 @@
 
 ## Purpose
 
-Conceptual and logical data structures for service requests, timeline audit events, and SLA derivations.
+Core entities for service requests, audit timeline, and SLA posture (computed at read time).
 
-## Conceptual model
+## Entity relationship
 
 ```mermaid
 erDiagram
-  SERVICE_REQUEST ||--o{ TIMELINE_EVENT : has
+  SERVICE_REQUEST ||--o{ TIMELINE_EVENT : logs
   SERVICE_REQUEST {
-    string id PK
-    string title
-    string description
-    string category
+    string id
     enum priority
-    string requester
-    string department
     enum status
-    datetime createdAt
     datetime slaDueAt
   }
   TIMELINE_EVENT {
-    string id PK
-    string requestId FK
-    datetime at
-    enum type
+    string type
     string actor
     string label
-    string note
   }
 ```
 
-## Logical schema (demo implementation)
+## Implementation
 
-Implemented in TypeScript types (`src/lib/types.ts`) with an in-memory collection (`src/lib/store.ts`).
+Types in `src/lib/types.ts`; in-memory collection in `src/lib/store.ts`.
 
-### `ServiceRequest`
+### ServiceRequest (header)
 
-| Field | Type | Rules |
-|-------|------|-------|
-| `id` | string | Format `SR-{n}`, unique |
-| `title` | string | 1–120 chars |
-| `description` | string | Required |
-| `category` | string | Controlled list in UI |
-| `priority` | `P1` \| `P2` \| `P3` | Drives SLA hours |
-| `requester` | string | Display name |
-| `department` | string | Owning unit |
-| `status` | enum | Workflow state |
-| `createdAt` | ISO datetime | Set at create |
-| `slaDueAt` | ISO datetime | `createdAt + SLA_HOURS[priority]` |
-| `timeline` | TimelineEvent[] | Ordered audit log |
+| Field | Notes |
+|-------|--------|
+| `id` | `SR-{n}`, unique |
+| `title`, `description` | Required intake |
+| `category`, `priority`, `requester`, `department` | Intake metadata |
+| `status` | Workflow enum |
+| `createdAt`, `slaDueAt` | Clock start + due |
+| `timeline` | Ordered events |
 
-### `TimelineEvent`
+### TimelineEvent (audit)
 
-| Field | Type | Rules |
-|-------|------|-------|
-| `id` | string | Unique per event |
-| `at` | ISO datetime | Event timestamp |
-| `type` | enum | `created`, `triaged`, `routed`, `approved`, `rejected`, `comment` |
-| `actor` | string | Human or System |
-| `label` | string | Short summary shown in UI |
-| `note` | string? | Optional detail |
+| Field | Notes |
+|-------|--------|
+| `type` | `created`, `triaged`, `routed`, `approved`, `rejected`, `comment` |
+| `actor`, `label`, `note?` | Who did what |
 
-## SLA derivation (non-persisted)
+## SLA posture (derived)
 
-`SlaStatus` is calculated at read time:
+| Value | Open request rule |
+|-------|-------------------|
+| `breached` | Now ≥ `slaDueAt` |
+| `at_risk` | ≤25% of window remaining |
+| `on_track` | Otherwise |
 
-| Value | Rule (open request) |
-|-------|---------------------|
-| `breached` | `now >= slaDueAt` |
-| `at_risk` | remaining time ≤ 25% of total window |
-| `on_track` | otherwise |
-
-Closed requests compare last timeline timestamp to `slaDueAt`.
-
-```mermaid
-classDiagram
-  class ServiceRequest {
-    +id
-    +priority
-    +status
-    +createdAt
-    +slaDueAt
-    +timeline
-  }
-  class SlaEngine {
-    +getSlaStatus(request)
-    +formatSlaRemaining(request)
-  }
-  ServiceRequest --> SlaEngine : reads
-```
+Closed requests compare last timeline time to due date. Logic: `src/lib/sla.ts`.
 
 ## Seed data
 
-`src/lib/seed.ts` provides six representative requests covering:
+`src/lib/seed.ts` — six tickets covering both approval gates, terminals, and breached submitted work (SR-0975).
 
-- Manager and director gates in flight  
-- Approved and rejected terminals  
-- Breached submitted work (SR-0975)  
+## Production notes
 
-## Production persistence notes
+Relational mapping: `service_requests` + append-only `timeline_events`. Index `(status, created_at)` and `(sla_due_at)` for breach sweeps.
 
-For a real deployment, map to relational tables:
+## Priority → SLA hours
 
-- `service_requests` (header)  
-- `timeline_events` (append-only, FK to request)  
-- Optional `attachments`, `approver_delegations`, `sla_pauses`  
-
-Indexes: `(status, created_at)`, `(sla_due_at)` for breach sweeps.
-
-## Data dictionary — priority SLA
-
-| Priority | SLA hours | Typical use |
-|----------|-----------|-------------|
-| P1 | 4 | Security/access/incident blocking work |
-| P2 | 24 | Significant but workaround exists |
-| P3 | 72 | Standard fulfillment / projects |
+| Priority | Hours | Typical use |
+|----------|-------|-------------|
+| P1 | 4 | Blocking / security |
+| P2 | 24 | Significant, workaround exists |
+| P3 | 72 | Standard / project work |
