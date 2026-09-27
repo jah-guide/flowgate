@@ -2,146 +2,85 @@
 
 ## Purpose
 
-Describe interactive scenarios from the actor’s perspective, with acceptance criteria aligned to the demo application.
+Key scenarios from each actor’s view, tied to demo behaviour and acceptance checks.
 
 ## Actors
 
-- **Requester** — submits work  
-- **Ops analyst** — triages and routes  
-- **Approver (manager/director)** — governance decisions  
-- **Ops lead** — monitors SLA posture (dashboard reader)  
-
-## Use case diagram
+| Actor | Role |
+|-------|------|
+| Requester | Submits work |
+| Ops analyst | Triage and route |
+| Manager / Director | Approve or reject |
+| Ops lead | Reads SLA posture on dashboard |
 
 ```mermaid
-flowchart TB
-  subgraph Actors
-    R[Requester]
-    O[Ops analyst]
-    M[Manager]
-    D[Director]
-    L[Ops lead]
-  end
-
-  subgraph UseCases
-    UC1[Submit service request]
-    UC2[Triage and route request]
-    UC3[Approve request]
-    UC4[Reject request]
-    UC5[Monitor SLA queue]
-    UC6[Review audit timeline]
-  end
-
-  R --> UC1
-  O --> UC2
-  M --> UC3
-  M --> UC4
-  D --> UC3
-  D --> UC4
-  L --> UC5
-  R --> UC6
-  O --> UC6
-  M --> UC6
-  D --> UC6
+flowchart LR
+  R[Requester] --> UC1[Submit]
+  O[Ops analyst] --> UC2[Triage]
+  M[Manager] --> UC3[Approve / reject]
+  D[Director] --> UC3
+  L[Ops lead] --> UC5[Monitor SLA]
+  R & O & M & D --> UC6[View timeline]
 ```
 
 ## UC-01 Submit service request
 
-**Primary actor:** Requester  
-**Precondition:** Demo app running  
-**Trigger:** User selects **New request**
+**Actor:** Requester · **Trigger:** **New request**
 
-**Main flow:**
+1. Enter title, description, category, priority, requester, department.  
+2. System validates, assigns ID, sets `submitted`, starts SLA, logs `created`.  
+3. User lands on detail page.
 
-1. Requester enters title, description, category, priority, requester, department.  
-2. System validates required fields.  
-3. System assigns ID, sets status `submitted`, starts SLA clock, records `created` timeline event.  
-4. System navigates to detail page.
-
-**Postcondition:** Request appears on list with SLA badge.
-
-**Acceptance criteria:**
-
-- SLA due reflects priority (P1/P2/P3).  
-- Status shows **Submitted**.  
-- Timeline contains “Request submitted”.
+**Acceptance:** SLA due matches priority; status **Submitted**; timeline shows submission.
 
 ---
 
 ## UC-02 Triage and route
 
-**Primary actor:** Ops analyst  
-**Precondition:** Request in `submitted`  
-**Trigger:** Analyst completes triage form on detail page
+**Actor:** Ops analyst · **Pre:** `submitted`
 
-**Main flow:**
+1. Optional triage note → system logs triage + route → `pending_manager`.
 
-1. Analyst adds optional triage note.  
-2. System records triage + route events.  
-3. Status becomes `pending_manager`.
-
-**Alternate:** Invalid state shows no triage panel (closed or already routed).
-
-**Acceptance criteria:**
-
-- Timeline shows triage and “Routed to line manager approval”.  
-- Manager approval panel visible.
+**Acceptance:** Timeline shows triage and manager routing; manager panel visible.
 
 ---
 
 ## UC-03 Multi-step approval
 
-**Primary actor:** Manager, then Director  
-**Precondition:** Request at respective gate  
+**Actors:** Manager, then Director
 
-**Main flow (happy path):**
+1. Manager approve → `pending_director`.  
+2. Director approve → `approved`.
 
-1. Manager approves → status `pending_director`.  
-2. Director approves → status `approved`.  
-3. Timeline captures both approvals.
-
-**Acceptance criteria:**
-
-- Cannot director-approve before manager step.  
-- Closed requests hide action panels.
+**Acceptance:** Director cannot act before manager; closed requests hide actions.
 
 ---
 
 ## UC-04 Reject with reason
 
-**Primary actor:** Manager or Director  
-**Main flow:**
+**Actor:** Manager or Director
 
-1. Approver enters rejection reason (required).  
-2. System sets `rejected`, appends rejection event.
+1. Required rejection reason → `rejected` + timeline event.
 
-**Acceptance criteria:**
-
-- Reason stored on timeline note.  
-- SLA panel still visible for post-mortem.
+**Acceptance:** Reason on timeline; SLA panel remains for review.
 
 ---
 
 ## UC-05 Monitor SLA posture
 
-**Primary actor:** Ops lead  
-**Trigger:** Opens home or requests list
+**Actor:** Ops lead · **Trigger:** Home or requests list
 
-**Acceptance criteria:**
+**Acceptance:** Dashboard counts (open, awaiting approval, at risk, breached); row badges; SR-0975 shows **Breached**.
 
-- Counts for open, awaiting approval, at risk, breached on dashboard.  
-- Each row shows On Track / At Risk / Breached badge.  
-- SR-0975 seed demonstrates breached submitted work.
+## User stories (delivered slice)
 
-## User stories (backlog slice delivered)
-
-| Story | As a… | I want… | So that… | FR |
-|-------|-------|---------|----------|-----|
-| S-01 | requester | to log a structured request | ops has consistent intake | FR-01 |
-| S-02 | ops analyst | a single queue sorted by recency | I can plan triage | FR-02 |
-| S-03 | ops analyst | SLA badges | I prioritize at-risk work | FR-04 |
-| S-04 | ops analyst | to triage from the detail page | context stays in one place | FR-05 |
-| S-05 | manager | approve or reject with notes | governance is auditable | FR-06, FR-08 |
-| S-06 | director | final approval | policy holds for high impact | FR-07 |
-| S-07 | ops lead | dashboard counts | I see breach trend early | FR-12 |
-| S-08 | demo visitor | reset seed data | I can replay scenarios | FR-10 |
+| ID | I want… | So that… | FR |
+|----|---------|----------|-----|
+| S-01 | structured intake | ops has one format | FR-01 |
+| S-02 | a recency-sorted queue | I can triage | FR-02 |
+| S-03 | SLA badges | I spot risk early | FR-04 |
+| S-04 | triage on detail | context stays together | FR-05 |
+| S-05 | approve/reject with notes | audit is clear | FR-06, FR-08 |
+| S-06 | director final gate | policy holds | FR-07 |
+| S-07 | dashboard counts | leadership sees trends | FR-12 |
+| S-08 | reset seed data | demos replay cleanly | FR-10 |

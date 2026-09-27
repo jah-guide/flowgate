@@ -2,124 +2,61 @@
 
 ## Purpose
 
-Illustrate runtime interactions between user, Next.js UI, server actions, and the in-memory store.
+How the UI, server actions, and in-memory store interact at runtime.
 
-## Create request
-
-```mermaid
-sequenceDiagram
-  actor U as Requester
-  participant UI as New Request page
-  participant SA as createRequestAction
-  participant ST as store.createRequest
-  participant SLA as sla.computeSlaDueAt
-
-  U->>UI: Submit form
-  UI->>SA: POST (server action)
-  SA->>ST: validate + persist
-  ST->>SLA: derive slaDueAt
-  ST-->>SA: ServiceRequest id
-  SA-->>UI: redirect /requests/{id}
-  UI-->>U: Detail view with timeline
-```
-
-## Triage and route
+## Intake → triage → approval
 
 ```mermaid
 sequenceDiagram
-  actor A as Ops analyst
-  participant UI as Detail page
-  participant SA as triageAction
-  participant ST as store.triageRequest
+  participant U as User
+  participant UI as Next.js pages
+  participant SA as Server actions
+  participant ST as store
 
-  A->>UI: Complete triage note
-  UI->>SA: server action
-  SA->>ST: assert status submitted
-  ST->>ST: append triage + route events
-  ST->>ST: status = pending_manager
-  SA->>UI: revalidate paths
-  UI-->>A: Manager approval panel
-```
+  U->>UI: Submit new request
+  UI->>SA: createRequestAction
+  SA->>ST: persist + SLA due
+  ST-->>UI: redirect to detail
 
-## Manager approve → director gate
+  U->>UI: Triage (submitted)
+  UI->>SA: triageAction
+  SA->>ST: events + pending_manager
 
-```mermaid
-sequenceDiagram
-  actor M as Manager
-  participant UI as Detail page
-  participant SA as approveAction
-  participant ST as store.approveRequest
+  U->>UI: Manager approve
+  UI->>SA: approveAction (manager)
+  SA->>ST: pending_director
 
-  M->>UI: Approve with note
-  UI->>SA: role=manager
-  SA->>ST: pending_manager branch
-  ST->>ST: timeline approved + routed
-  ST->>ST: status = pending_director
-  UI-->>M: Director panel shown
-```
-
-## Director approve (close happy path)
-
-```mermaid
-sequenceDiagram
-  actor D as Director
-  participant UI as Detail page
-  participant SA as approveAction
-  participant ST as store.approveRequest
-
-  D->>UI: Approve
-  UI->>SA: role=director
-  SA->>ST: pending_director branch
-  ST->>ST: timeline approved
-  ST->>ST: status = approved
-  UI-->>D: Workflow closed message
+  U->>UI: Director approve
+  UI->>SA: approveAction (director)
+  SA->>ST: approved
 ```
 
 ## Reject path
 
 ```mermaid
 sequenceDiagram
-  actor M as Manager/Director
-  participant UI as Detail page
+  participant U as Approver
   participant SA as rejectAction
-  participant ST as store.rejectRequest
+  participant ST as store
 
-  M->>UI: Reject + reason
-  UI->>SA: server action
-  SA->>ST: validate pending_* 
-  ST->>ST: append rejected event
-  ST->>ST: status = rejected
-  UI-->>M: Actions hidden
+  U->>SA: reason required
+  SA->>ST: rejected + timeline
 ```
 
-## SLA read path (list/detail)
+## SLA on list / detail
 
 ```mermaid
 sequenceDiagram
-  participant UI as Requests page
+  participant UI as Requests UI
+  participant ST as listRequests
   participant SLA as getSlaStatus
-  participant ST as store.listRequests
 
-  UI->>ST: fetch requests
-  ST-->>UI: ServiceRequest[]
+  UI->>ST: load requests
   loop each row
     UI->>SLA: compute posture
-    SLA-->>UI: on_track / at_risk / breached
   end
 ```
 
-## Reset demo data
+## Reset demo
 
-```mermaid
-sequenceDiagram
-  actor U as Visitor
-  participant UI as Footer form
-  participant SA as resetDemoAction
-  participant ST as store.resetDemoData
-
-  U->>UI: Reset demo data
-  UI->>SA: server action
-  SA->>ST: clone SEED_REQUESTS
-  SA->>UI: revalidate /
-  UI-->>U: Seed restored
-```
+Visitor uses footer **Reset demo data** → `resetDemoAction` → `store.resetDemoData()` → seed restored.
