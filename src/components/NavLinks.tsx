@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-function navClass(pathname: string, href: string, exact?: boolean) {
-  const active = exact ? pathname === href : pathname.startsWith(href);
-  return active ? "nav-active" : undefined;
+function requestsActive(pathname: string) {
+  if (pathname === "/requests") return true;
+  if (pathname.startsWith("/requests/") && !pathname.startsWith("/requests/new")) return true;
+  return false;
 }
 
 export function NavLinks() {
@@ -13,13 +14,16 @@ export function NavLinks() {
 
   return (
     <nav className="nav" aria-label="Primary">
-      <Link href="/" className={navClass(pathname, "/", true)}>
+      <Link href="/" className={pathname === "/" ? "nav-active" : undefined}>
         Control board
       </Link>
-      <Link href="/requests" className={navClass(pathname, "/requests")}>
+      <Link href="/requests" className={requestsActive(pathname) ? "nav-active" : undefined}>
         Requests
       </Link>
-      <Link href="/requests/new" className={`nav-cta ${navClass(pathname, "/requests/new") ?? ""}`}>
+      <Link
+        href="/requests/new"
+        className={`nav-cta${pathname === "/requests/new" ? " nav-active" : ""}`}
+      >
         New request
       </Link>
     </nav>

@@ -17,30 +17,30 @@ export default async function RequestDetailPage({
   if (!request) notFound();
 
   return (
-    <AppShell>
+    <AppShell eyebrow={request.id}>
       <div className="breadcrumb">
         <Link href="/requests">Requests</Link>
-        <span>/</span>
+        <span aria-hidden>/</span>
         <span>{request.id}</span>
       </div>
 
       <div className="page-header">
         <h1>{request.title}</h1>
         <p>
-          {request.id} · {request.category} · <StatusBadge status={request.status} />
+          {request.category} · <StatusBadge status={request.status} />
         </p>
       </div>
 
       <div className="detail-grid">
         <div className="stack-form" style={{ gap: "1rem" }}>
           <section className="card">
-            <h2>Description</h2>
-            <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{request.description}</p>
-            <dl className="sla-dl" style={{ marginTop: "0.85rem" }}>
+            <h2>Request details</h2>
+            <p style={{ margin: 0, whiteSpace: "pre-wrap", lineHeight: 1.55 }}>{request.description}</p>
+            <dl className="sla-dl" style={{ marginTop: "1rem" }}>
               <div>
                 <dt>Requester</dt>
                 <dd>
-                  {request.requester} ({request.department})
+                  {request.requester} · {request.department}
                 </dd>
               </div>
               <div>
@@ -48,20 +48,25 @@ export default async function RequestDetailPage({
                 <dd>{request.priority}</dd>
               </div>
               <div>
-                <dt>Status</dt>
+                <dt>Workflow</dt>
                 <dd>{request.status.replaceAll("_", " ")}</dd>
               </div>
             </dl>
           </section>
 
           <section className="card">
-            <h2>Status timeline</h2>
+            <h2>Audit timeline</h2>
+            <p className="muted" style={{ marginTop: 0 }}>
+              Immutable events for triage, routing, and approvals.
+            </p>
             <Timeline events={request.timeline} />
           </section>
         </div>
 
         <div className="stack-form" style={{ gap: "1rem" }}>
-          <SlaDetail request={request} />
+          <section aria-label="SLA posture">
+            <SlaDetail request={request} />
+          </section>
           <RequestActions id={request.id} status={request.status} />
         </div>
       </div>
