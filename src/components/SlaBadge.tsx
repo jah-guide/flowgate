@@ -10,7 +10,12 @@ const LABELS = {
 export function SlaBadge({ request }: { request: ServiceRequest }) {
   const status = getSlaStatus(request);
   return (
-    <span className={`sla sla-${status}`} title={formatSlaRemaining(request)}>
+    <span
+      className={`badge sla sla-${status}`}
+      title={formatSlaRemaining(request)}
+      aria-label={`SLA ${LABELS[status]}: ${formatSlaRemaining(request)}`}
+    >
+      <span className="badge-dot" aria-hidden />
       {LABELS[status]}
     </span>
   );
@@ -20,9 +25,9 @@ export function SlaDetail({ request }: { request: ServiceRequest }) {
   const status = getSlaStatus(request);
   const remaining = formatSlaRemaining(request);
   return (
-    <div className={`sla-panel sla-panel-${status}`}>
+    <div className={`sla-panel sla-panel-${status}`} aria-live="polite">
       <div className="sla-panel-head">
-        <span className={`sla sla-${status}`}>{LABELS[status]}</span>
+        <SlaBadge request={request} />
         <span className="sla-meta">{remaining}</span>
       </div>
       <dl className="sla-dl">
