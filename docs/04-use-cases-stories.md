@@ -72,6 +72,29 @@ flowchart LR
 
 **Acceptance:** Dashboard counts (open, awaiting approval, at risk, breached); row badges; SR-0975 shows **Breached**.
 
+---
+
+## UC-06 Find and export queue items
+
+**Actor:** Ops analyst · **Trigger:** `/requests`
+
+1. Search by ID or keywords; narrow by status, priority, or SLA posture.  
+2. Optional **Export CSV** for the filtered set.  
+3. If nothing matches, clear filters from the empty state.
+
+**Acceptance:** Count label shows `Showing X of Y`; CSV includes ID, status, SLA posture, and due times.
+
+---
+
+## UC-07 Operate with confirmations and shortcuts
+
+**Actor:** Manager / Director / Ops analyst · **Trigger:** Request detail
+
+1. Destructive or advancing actions show a browser confirm dialog.  
+2. On approval steps, **A** approves (with confirm), **X** focuses rejection reason; triage uses **T**.
+
+**Acceptance:** Reset demo data also confirms before restoring seed queue.
+
 ## User stories (delivered slice)
 
 | ID | I want… | So that… | FR |
@@ -84,3 +107,8 @@ flowchart LR
 | S-06 | director final gate | policy holds | FR-07 |
 | S-07 | dashboard counts | leadership sees trends | FR-12 |
 | S-08 | reset seed data | demos replay cleanly | FR-10 |
+| S-09 | search and filter the queue | I focus on at-risk P1s | FR-13, FR-14 |
+| S-10 | export CSV | I share a snapshot | FR-15 |
+| S-11 | live SLA countdown | I see time left without refresh | FR-16 |
+| S-12 | activity on the home board | I spot recent approvals | FR-19 |
+| S-13 | density / contrast prefs | the board fits my screen | FR-20 |

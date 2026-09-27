@@ -123,6 +123,102 @@ Verify on a newly created request for each priority.
 
 ---
 
+### AT-11 Queue search and filters (FR-13, FR-14)
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 1 | Open `/requests` | Search box and status/priority/SLA filters visible |
+| 2 | Search `SR-0975` | Single breached row |
+| 3 | Filter SLA **At risk** or **Breached** | Rows match posture; summary updates |
+| 4 | Apply impossible combo | Filtered empty state with **Clear all filters** |
+
+**Result:** ☐ Pass ☐ Fail
+
+---
+
+### AT-12 Export CSV (FR-15)
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 1 | Filter queue to 2+ rows | Summary shows filtered count |
+| 2 | Click **Export CSV** | File downloads with header row |
+| 3 | Open file | Columns include ID, Status, SLA Posture, SLA Due |
+
+**Result:** ☐ Pass ☐ Fail
+
+---
+
+### AT-13 SLA countdown (FR-16)
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 1 | Open `/requests` | **SLA clock** column shows remaining or overdue text |
+| 2 | Open any open request detail | SLA panel shows live countdown (updates ~30s) |
+
+**Result:** ☐ Pass ☐ Fail
+
+---
+
+### AT-14 Confirmations and keyboard (FR-17, FR-18)
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 1 | Start triage/approve/reject | Browser confirm appears; cancel keeps page |
+| 2 | On manager gate, press **A** (not in a field) | Approve confirm appears |
+| 3 | Footer **Reset demo data** | Confirm before seed restore |
+
+**Result:** ☐ Pass ☐ Fail
+
+---
+
+### AT-15 Activity and preferences (FR-19, FR-20)
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 1 | Open `/` | **Recent activity** lists latest timeline events |
+| 2 | Change density to **Compact** | Table padding tightens; persists on reload |
+| 3 | Enable **High contrast** | Theme tokens brighten; persists on reload |
+
+**Result:** ☐ Pass ☐ Fail
+
+---
+
+### AT-16 Queue presets and URL (FR-21, FR-22, FR-23)
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 1 | Click **Needs attention** preset | Only open at-risk/breached rows; URL contains `quick=attention` |
+| 2 | Reload page | Filters restore from URL |
+| 3 | Sort **SLA due soonest** | Nearest due dates rise to top |
+| 4 | Press **/** (outside a field) | Search input focuses |
+
+**Result:** ☐ Pass ☐ Fail
+
+---
+
+### AT-17 Detail utilities (FR-24, FR-25)
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 1 | Open any open request | SLA progress bar shows elapsed % |
+| 2 | **Copy ID** / **Copy link** | Clipboard receives values; button shows **Copied** briefly |
+
+**Result:** ☐ Pass ☐ Fail
+
+---
+
+### AT-18 Intake draft and nav badge (FR-26, FR-27)
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 1 | Partially fill `/requests/new`, navigate away, return | Fields restored from local draft |
+| 2 | **Clear draft** | Fields reset to defaults |
+| 3 | With at-risk/breached open tickets | **Requests** nav shows count badge |
+
+**Result:** ☐ Pass ☐ Fail
+
+---
+
 ### AT-10 Reset demo data (FR-10)
 
 | Step | Action | Expected |

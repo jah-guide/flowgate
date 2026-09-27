@@ -20,6 +20,21 @@ Link requirements to design, code, and acceptance tests.
 | FR-10 | Reset demo | `resetDemoAction` | AT-10 |
 | FR-11 | Reject reason | reject form `required` | AT-07 |
 | FR-12 | Dashboard | `src/app/page.tsx` | AT-04 |
+| FR-13 | Queue search | `queue-filters.ts`, `RequestQueue` | AT-11 |
+| FR-14 | Queue filters | `RequestQueue` | AT-11 |
+| FR-15 | CSV export | `export-csv.ts` | AT-12 |
+| FR-16 | SLA countdown | `SlaCountdown`, `RequestTable` | AT-13 |
+| FR-17 | Confirm dialogs | `RequestWorkflowPanel`, `ResetDemoButton` | AT-14 |
+| FR-18 | Keyboard shortcuts | `RequestWorkflowPanel` | AT-14 |
+| FR-19 | Activity feed | `ActivityFeed`, `activity.ts` | AT-15 |
+| FR-20 | UI preferences | `preferences.tsx`, `PreferenceToggle` | AT-15 |
+| FR-21 | Queue presets | `QUEUE_PRESETS`, `RequestQueue` | AT-16 |
+| FR-22 | URL filters | `filtersToSearchParams` | AT-16 |
+| FR-23 | SLA sort | `sortRequests` | AT-16 |
+| FR-24 | SLA progress | `SlaProgressBar` | AT-17 |
+| FR-25 | Copy actions | `CopyButton`, detail header | AT-17 |
+| FR-26 | Intake draft | `NewRequestForm` | AT-18 |
+| FR-27 | Attention badge | `NavLinks`, `countAttentionRequests` | AT-18 |
 
 ## Stories → routes
 
@@ -32,6 +47,10 @@ Link requirements to design, code, and acceptance tests.
 | S-05–S-06 | FR-06–07 | detail approve |
 | S-07 | FR-12 | `/` |
 | S-08 | FR-10 | footer reset |
+| S-09–S-10 | FR-13–15 | `/requests` |
+| S-11 | FR-16 | list + detail SLA |
+| S-12 | FR-19 | `/` activity |
+| S-13 | FR-20 | topbar prefs |
 
 ## NFR evidence
 
