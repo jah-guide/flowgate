@@ -1,5 +1,7 @@
 import { formatSlaRemaining, getSlaStatus } from "@/lib/sla";
 import type { ServiceRequest } from "@/lib/types";
+import { SlaCountdown } from "./SlaCountdown";
+import { SlaProgressBar } from "./SlaProgressBar";
 
 const LABELS = {
   on_track: "On Track",
@@ -28,8 +30,10 @@ export function SlaDetail({ request }: { request: ServiceRequest }) {
     <div className={`sla-panel sla-panel-${status}`} aria-live="polite">
       <div className="sla-panel-head">
         <SlaBadge request={request} />
-        <span className="sla-meta">{remaining}</span>
+        <SlaCountdown request={request} className="sla-meta sla-meta-live" />
+        <span className="visually-hidden">Static readout: {remaining}</span>
       </div>
+      <SlaProgressBar request={request} />
       <dl className="sla-dl">
         <div>
           <dt>Priority</dt>
