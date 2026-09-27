@@ -1,18 +1,43 @@
+"use client";
+
 import Link from "next/link";
 import { SlaBadge } from "./SlaBadge";
 import { StatusBadge } from "./StatusBadge";
 import type { ServiceRequest } from "@/lib/types";
 
+import { SlaCountdown } from "./SlaCountdown";
+
 export function RequestTable({
   requests,
   compact,
   caption = "Service request queue — newest first",
+  emptyVariant = "none",
+  onClearFilters,
 }: {
   requests: ServiceRequest[];
   compact?: boolean;
   caption?: string;
+  emptyVariant?: "none" | "filtered";
+  onClearFilters?: () => void;
 }) {
   if (!requests.length) {
+    if (emptyVariant === "filtered") {
+      return (
+        <div className="empty empty-filtered">
+          <div className="empty-icon" aria-hidden>
+            ⌕
+          </div>
+          <h3>No matches for current filters</h3>
+          <p className="muted">Try clearing search text or widening status and SLA filters.</p>
+          {onClearFilters && (
+            <button type="button" className="button button-ghost" onClick={onClearFilters}>
+              Clear all filters
+            </button>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="empty">
         <div className="empty-icon" aria-hidden>
@@ -37,6 +62,7 @@ export function RequestTable({
             <th>Priority</th>
             <th>Status</th>
             <th>SLA posture</th>
+            {!compact && <th>SLA clock</th>}
             {!compact && (
               <>
                 <th>Requester</th>
@@ -70,6 +96,9 @@ export function RequestTable({
               </td>
               {!compact && (
                 <>
+                  <td className="nowrap">
+                    <SlaCountdown request={r} />
+                  </td>
                   <td>
                     {r.requester}
                     <span className="muted">{r.department}</span>
