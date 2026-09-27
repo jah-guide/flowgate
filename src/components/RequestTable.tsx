@@ -3,11 +3,22 @@ import { SlaBadge } from "./SlaBadge";
 import { StatusBadge } from "./StatusBadge";
 import type { ServiceRequest } from "@/lib/types";
 
-export function RequestTable({ requests }: { requests: ServiceRequest[] }) {
+export function RequestTable({
+  requests,
+  compact,
+  caption = "Service request queue — newest first",
+}: {
+  requests: ServiceRequest[];
+  compact?: boolean;
+  caption?: string;
+}) {
   if (!requests.length) {
     return (
       <div className="empty">
-        <p>No service requests yet.</p>
+        <div className="empty-icon" aria-hidden>
+          ◇
+        </div>
+        <p>No service requests in the queue yet.</p>
         <Link href="/requests/new" className="button">
           Create the first request
         </Link>
@@ -18,15 +29,20 @@ export function RequestTable({ requests }: { requests: ServiceRequest[] }) {
   return (
     <div className="table-wrap">
       <table className="data-table">
+        <caption>{caption}</caption>
         <thead>
           <tr>
             <th>ID</th>
             <th>Title</th>
             <th>Priority</th>
             <th>Status</th>
-            <th>SLA</th>
-            <th>Requester</th>
-            <th>Opened</th>
+            <th>SLA posture</th>
+            {!compact && (
+              <>
+                <th>Requester</th>
+                <th>Opened</th>
+              </>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -52,11 +68,15 @@ export function RequestTable({ requests }: { requests: ServiceRequest[] }) {
               <td>
                 <SlaBadge request={r} />
               </td>
-              <td>
-                {r.requester}
-                <span className="muted">{r.department}</span>
-              </td>
-              <td className="nowrap">{new Date(r.createdAt).toLocaleString()}</td>
+              {!compact && (
+                <>
+                  <td>
+                    {r.requester}
+                    <span className="muted">{r.department}</span>
+                  </td>
+                  <td className="nowrap">{new Date(r.createdAt).toLocaleString()}</td>
+                </>
+              )}
             </tr>
           ))}
         </tbody>
