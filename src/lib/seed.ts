@@ -1,0 +1,216 @@
+import type { ServiceRequest } from "./types";
+import { computeSlaDueAt } from "./sla";
+
+const hoursAgo = (h: number) => new Date(Date.now() - h * 60 * 60 * 1000).toISOString();
+
+function buildSeed(partial: Omit<ServiceRequest, "slaDueAt">): ServiceRequest {
+  return {
+    ...partial,
+    slaDueAt: computeSlaDueAt(partial.createdAt, partial.priority),
+  };
+}
+
+export const SEED_REQUESTS: ServiceRequest[] = [
+  buildSeed({
+    id: "SR-1042",
+    title: "VPN access for contractor cohort",
+    description:
+      "Twelve contractors start Monday; need scoped VPN profiles and MFA enrollment before 08:00.",
+    category: "Access",
+    priority: "P1",
+    requester: "L. Naidoo",
+    department: "HR Operations",
+    status: "pending_manager",
+    createdAt: hoursAgo(2.5),
+    timeline: [
+      {
+        id: "e1",
+        at: hoursAgo(2.5),
+        type: "created",
+        actor: "L. Naidoo",
+        label: "Request submitted",
+      },
+      {
+        id: "e2",
+        at: hoursAgo(2),
+        type: "triaged",
+        actor: "Ops Analyst (demo)",
+        label: "Triaged as P1 — access provisioning",
+        note: "Requires manager then director sign-off for bulk external access.",
+      },
+      {
+        id: "e3",
+        at: hoursAgo(2),
+        type: "routed",
+        actor: "System",
+        label: "Routed to line manager approval",
+      },
+    ],
+  }),
+  buildSeed({
+    id: "SR-1038",
+    title: "Replace failed SAN disk — Finance cluster",
+    description: "Monitoring alert on array bay 4; finance reporting batch runs tonight.",
+    category: "Infrastructure",
+    priority: "P1",
+    requester: "NOC Bridge",
+    department: "Infrastructure",
+    status: "triaged",
+    createdAt: hoursAgo(1),
+    timeline: [
+      {
+        id: "e1",
+        at: hoursAgo(1),
+        type: "created",
+        actor: "NOC Bridge",
+        label: "Request submitted",
+      },
+      {
+        id: "e2",
+        at: hoursAgo(0.75),
+        type: "triaged",
+        actor: "Ops Analyst (demo)",
+        label: "Triaged as P1 — storage incident",
+      },
+    ],
+  }),
+  buildSeed({
+    id: "SR-1021",
+    title: "New SaaS integration — expense approvals",
+    description: "Pilot integration with ExpenseFlow for 40 users in APAC region.",
+    category: "Integration",
+    priority: "P2",
+    requester: "M. Chen",
+    department: "Finance Systems",
+    status: "pending_director",
+    createdAt: hoursAgo(20),
+    timeline: [
+      {
+        id: "e1",
+        at: hoursAgo(20),
+        type: "created",
+        actor: "M. Chen",
+        label: "Request submitted",
+      },
+      {
+        id: "e2",
+        at: hoursAgo(19),
+        type: "triaged",
+        actor: "Ops Analyst (demo)",
+        label: "Triaged as P2",
+      },
+      {
+        id: "e3",
+        at: hoursAgo(18),
+        type: "approved",
+        actor: "Line Manager (demo)",
+        label: "Manager approved",
+        note: "Data classification review attached.",
+      },
+      {
+        id: "e4",
+        at: hoursAgo(18),
+        type: "routed",
+        actor: "System",
+        label: "Routed to director approval",
+      },
+    ],
+  }),
+  buildSeed({
+    id: "SR-0997",
+    title: "Laptop refresh — Q3 cohort (48 devices)",
+    description: "Standard build; include BitLocker escrow and asset tags.",
+    category: "Hardware",
+    priority: "P3",
+    requester: "S. Pillay",
+    department: "Corporate Services",
+    status: "approved",
+    createdAt: hoursAgo(96),
+    timeline: [
+      {
+        id: "e1",
+        at: hoursAgo(96),
+        type: "created",
+        actor: "S. Pillay",
+        label: "Request submitted",
+      },
+      {
+        id: "e2",
+        at: hoursAgo(90),
+        type: "triaged",
+        actor: "Ops Analyst (demo)",
+        label: "Triaged as P3",
+      },
+      {
+        id: "e3",
+        at: hoursAgo(72),
+        type: "approved",
+        actor: "Line Manager (demo)",
+        label: "Manager approved",
+      },
+      {
+        id: "e4",
+        at: hoursAgo(48),
+        type: "approved",
+        actor: "Director (demo)",
+        label: "Director approved — fulfillment queued",
+      },
+    ],
+  }),
+  buildSeed({
+    id: "SR-0988",
+    title: "Legacy FTP endpoint decommission",
+    description: "Vendor migrated; confirm no remaining consumers before shutdown.",
+    category: "Security",
+    priority: "P2",
+    requester: "G. Okonkwo",
+    department: "InfoSec",
+    status: "rejected",
+    createdAt: hoursAgo(30),
+    timeline: [
+      {
+        id: "e1",
+        at: hoursAgo(30),
+        type: "created",
+        actor: "G. Okonkwo",
+        label: "Request submitted",
+      },
+      {
+        id: "e2",
+        at: hoursAgo(28),
+        type: "triaged",
+        actor: "Ops Analyst (demo)",
+        label: "Triaged as P2",
+      },
+      {
+        id: "e3",
+        at: hoursAgo(26),
+        type: "rejected",
+        actor: "Line Manager (demo)",
+        label: "Manager rejected",
+        note: "Dependency map incomplete — resubmit with consumer sign-off.",
+      },
+    ],
+  }),
+  buildSeed({
+    id: "SR-0975",
+    title: "Emergency firewall rule — vendor maintenance window",
+    description: "Temporary allow rule for vendor IP range during patch window.",
+    category: "Security",
+    priority: "P1",
+    requester: "Change Advisory",
+    department: "Infrastructure",
+    status: "submitted",
+    createdAt: hoursAgo(5),
+    timeline: [
+      {
+        id: "e1",
+        at: hoursAgo(5),
+        type: "created",
+        actor: "Change Advisory",
+        label: "Request submitted",
+        note: "Awaiting ops triage — SLA at risk.",
+      },
+    ],
+  }),
+];
