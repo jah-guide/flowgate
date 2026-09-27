@@ -6,19 +6,20 @@ export function RequestActions({ id, status }: { id: string; status: RequestStat
     return (
       <section className="card">
         <h2>Workflow</h2>
-        <p className="muted">This request is closed. No further actions.</p>
+        <p className="muted">This request is closed — no further actions available.</p>
       </section>
     );
   }
 
   if (status === "submitted") {
     return (
-      <section className="card">
+      <section className="card card-accent">
         <h2>Triage</h2>
-        <p className="muted">Ops analyst validates category, priority, and routes for approval.</p>
+        <p className="muted">Validate category and priority, then route to manager approval.</p>
         <form action={triageAction.bind(null, id)} className="stack-form">
           <label>
             Triage note
+            <span className="field-hint">Optional — captured on the timeline</span>
             <textarea name="note" rows={3} placeholder="Routing rationale, dependencies…" />
           </label>
           <button type="submit" className="button">
@@ -35,7 +36,7 @@ export function RequestActions({ id, status }: { id: string; status: RequestStat
   return (
     <section className="card">
       <h2>{heading}</h2>
-      <p className="muted">Approve to advance the workflow, or reject with a reason.</p>
+      <p className="muted">Approve to advance, or reject with a required reason.</p>
       <div className="action-grid">
         <form action={approveAction.bind(null, id)} className="stack-form">
           <input type="hidden" name="role" value={role} />
@@ -51,7 +52,8 @@ export function RequestActions({ id, status }: { id: string; status: RequestStat
           <input type="hidden" name="role" value={role} />
           <label>
             Rejection reason
-            <textarea name="note" rows={3} required placeholder="Required for rejection…" />
+            <span className="field-hint">Required</span>
+            <textarea name="note" rows={3} required placeholder="Why this request cannot proceed…" />
           </label>
           <button type="submit" className="button button-reject">
             Reject
