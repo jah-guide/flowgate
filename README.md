@@ -50,9 +50,11 @@ Open the URL shown by Next.js (typically `http://localhost:3000`).
 
 **Suggested walkthrough**
 
-1. Review home **control board** stats, then open **Requests**
-2. Create a P1 from **New request**, triage, approve as manager and director
-3. Open seeded **SR-0975** to see **Breached** SLA on a submitted ticket
+1. Review home **control board** stats and **Recent activity**, then open **Requests**
+2. Search/filter the queue, export CSV if needed, create a P1 from **New request**
+3. Triage and approve (confirm dialogs / keyboard **T** and **A** on detail)
+4. Open seeded **SR-0975** to see **Breached** SLA and live countdown
+5. Try **Compact** density or **High contrast** in the top bar (saved locally)
 
 Production-style check before deploy:
 

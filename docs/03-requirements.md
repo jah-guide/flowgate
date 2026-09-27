@@ -20,6 +20,21 @@ Functional and non-functional requirements for the service-request workflow prot
 | FR-10 | Reset demo to seed data | Should |
 | FR-11 | Rejection requires reason at approval steps | Should |
 | FR-12 | Dashboard: open, awaiting approval, at risk, breached counts | Should |
+| FR-13 | Queue search across ID, title, requester, category | Should |
+| FR-14 | Filter queue by status, priority, SLA posture | Should |
+| FR-15 | Export visible queue rows to CSV | Could |
+| FR-16 | Live SLA remaining countdown on list and detail | Should |
+| FR-17 | Confirm before triage, approve, reject, and demo reset | Should |
+| FR-18 | Keyboard shortcuts on detail workflow (T/A/X) | Could |
+| FR-19 | Recent activity feed on control board | Should |
+| FR-20 | Persist table density and high-contrast theme locally | Could |
+| FR-21 | Quick queue presets (attention, approval, open P1) | Should |
+| FR-22 | Shareable queue filter state in URL query params | Should |
+| FR-23 | Sort queue by SLA urgency | Could |
+| FR-24 | SLA elapsed progress bar on detail panel | Should |
+| FR-25 | Copy request ID and deep link on detail | Could |
+| FR-26 | Local draft for new-request form | Could |
+| FR-27 | Nav badge for SLA attention count | Should |
 
 ## Non-functional requirements
 
