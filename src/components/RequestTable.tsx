@@ -24,9 +24,7 @@ export function RequestTable({
     if (emptyVariant === "filtered") {
       return (
         <div className="empty empty-filtered">
-          <div className="empty-icon" aria-hidden>
-            ⌕
-          </div>
+          <div className="empty-graphic empty-graphic-search" aria-hidden />
           <h3>No matches for current filters</h3>
           <p className="muted">Try clearing search text or widening status and SLA filters.</p>
           {onClearFilters && (
@@ -40,9 +38,7 @@ export function RequestTable({
 
     return (
       <div className="empty">
-        <div className="empty-icon" aria-hidden>
-          ◇
-        </div>
+        <div className="empty-graphic empty-graphic-queue" aria-hidden />
         <p>No service requests in the queue yet.</p>
         <Link href="/requests/new" className="button">
           Create the first request

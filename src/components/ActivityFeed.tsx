@@ -7,7 +7,7 @@ export function ActivityFeed({ requests }: { requests: ServiceRequest[] }) {
 
   if (!items.length) {
     return (
-      <section className="card">
+      <section className="card activity-panel">
         <h2>Recent activity</h2>
         <p className="muted">Timeline events from triage and approvals will appear here.</p>
       </section>
@@ -15,7 +15,7 @@ export function ActivityFeed({ requests }: { requests: ServiceRequest[] }) {
   }
 
   return (
-    <section className="card">
+    <section className="card activity-panel">
       <h2>Recent activity</h2>
       <p className="muted" style={{ marginTop: 0 }}>
         Latest audit events across the queue — newest first.

@@ -68,7 +68,7 @@ npm run build
 
 - Next.js 15 (App Router) + TypeScript, static export for GitHub Pages
 - Client-side in-memory store (localStorage) for workflow transitions
-- Custom CSS — deep slate control-board theme (teal + amber accents)
+- Custom CSS — IBM Plex typography, deep ink control-board surfaces, subtle grid/noise atmosphere, teal + amber SLA accents
 
 ## Portfolio note
 

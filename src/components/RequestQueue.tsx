@@ -72,7 +72,7 @@ export function RequestQueue({ requests }: { requests: ServiceRequest[] }) {
 
   return (
     <>
-      <div className="queue-toolbar card">
+      <div className="queue-toolbar">
         <div className="queue-toolbar-row">
           <label className="search-field">
             <span className="visually-hidden">Search requests</span>
