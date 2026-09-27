@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ActivityFeed } from "@/components/ActivityFeed";
 import { AppShell } from "@/components/AppShell";
 import { RequestTable } from "@/components/RequestTable";
 import { getSlaStatus } from "@/lib/sla";
@@ -44,6 +45,14 @@ export default function HomePage() {
               <span>SLA breached</span>
             </div>
           </div>
+          <p className="quick-links muted">
+            Quick views:{" "}
+            <Link href="/requests?quick=attention">Needs attention</Link>
+            {" · "}
+            <Link href="/requests?quick=approval">Awaiting approval</Link>
+            {" · "}
+            <Link href="/requests?quick=open_p1">Open P1</Link>
+          </p>
         </section>
         <section className="card">
           <h2>Demo walkthrough</h2>
@@ -64,15 +73,18 @@ export default function HomePage() {
         </section>
       </div>
 
-      <section>
-        <div className="table-toolbar">
-          <h2>Recent requests</h2>
-          <Link href="/requests" className="row-link">
-            View all →
-          </Link>
-        </div>
-        <RequestTable requests={requests.slice(0, 6)} caption="Latest six tickets" />
-      </section>
+      <div className="dashboard-grid">
+        <section>
+          <div className="table-toolbar">
+            <h2>Recent requests</h2>
+            <Link href="/requests" className="row-link">
+              View all →
+            </Link>
+          </div>
+          <RequestTable requests={requests.slice(0, 6)} caption="Latest six tickets" compact />
+        </section>
+        <ActivityFeed requests={requests} />
+      </div>
     </AppShell>
   );
 }
