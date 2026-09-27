@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
-import { RequestActions } from "@/components/RequestActions";
+import { CopyButton } from "@/components/CopyButton";
+import { CopyRequestLink } from "@/components/CopyRequestLink";
+import { RequestWorkflowPanel } from "@/components/RequestWorkflowPanel";
 import { SlaDetail } from "@/components/SlaBadge";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Timeline } from "@/components/Timeline";
@@ -24,11 +26,17 @@ export default async function RequestDetailPage({
         <span>{request.id}</span>
       </div>
 
-      <div className="page-header">
-        <h1>{request.title}</h1>
-        <p>
-          {request.category} · <StatusBadge status={request.status} />
-        </p>
+      <div className="page-header detail-header">
+        <div>
+          <h1>{request.title}</h1>
+          <p>
+            {request.category} · <StatusBadge status={request.status} />
+          </p>
+        </div>
+        <div className="detail-header-actions">
+          <CopyButton value={request.id} label="Copy ID" />
+          <CopyRequestLink id={request.id} />
+        </div>
       </div>
 
       <div className="detail-grid">
@@ -67,7 +75,7 @@ export default async function RequestDetailPage({
           <section aria-label="SLA posture">
             <SlaDetail request={request} />
           </section>
-          <RequestActions id={request.id} status={request.status} />
+          <RequestWorkflowPanel id={request.id} status={request.status} />
         </div>
       </div>
     </AppShell>
