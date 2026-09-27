@@ -52,10 +52,13 @@ export function NewRequestForm({ onSubmit }: { onSubmit: (formData: FormData) =>
   }
 
   return (
-    <section className="card form-card">
-      <p className="muted form-draft-hint">
-        Draft fields save locally in this browser until you submit or clear the draft.
-      </p>
+    <section className="card form-card card-accent">
+      <div className="form-card-head">
+        <h2>Intake form</h2>
+        <p className="muted form-draft-hint">
+          Draft fields save locally in this browser until you submit or clear the draft.
+        </p>
+      </div>
       <form
         className="stack-form"
         onSubmit={(e) => {

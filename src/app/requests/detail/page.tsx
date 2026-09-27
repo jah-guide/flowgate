@@ -62,7 +62,7 @@ function RequestDetailContent() {
       </div>
 
       <div className="detail-grid">
-        <div className="stack-form" style={{ gap: "1rem" }}>
+        <div className="stack-form detail-stack">
           <section className="card">
             <h2>Request details</h2>
             <p style={{ margin: 0, whiteSpace: "pre-wrap", lineHeight: 1.55 }}>{request.description}</p>
@@ -93,7 +93,7 @@ function RequestDetailContent() {
           </section>
         </div>
 
-        <div className="stack-form" style={{ gap: "1rem" }}>
+        <div className="stack-form detail-stack">
           <section aria-label="SLA posture">
             <SlaDetail request={request} />
           </section>

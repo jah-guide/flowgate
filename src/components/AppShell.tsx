@@ -20,10 +20,31 @@ export function AppShell({
 }) {
   const { listRequests } = useFlowgate();
   const attentionCount = countAttentionRequests(listRequests());
+  const openCount = listRequests().filter(
+    (r) => r.status !== "approved" && r.status !== "rejected",
+  ).length;
 
   return (
     <div className="shell">
+      <div className="shell-backdrop" aria-hidden />
       <header className="topbar">
+        <div className="topbar-status">
+          <div className="topbar-status-inner">
+            <span className="status-pill">
+              <span className="status-pill-dot" aria-hidden />
+              Local store · SLA engine live
+            </span>
+            <span className="topbar-status-meta">
+              {openCount} open ticket{openCount === 1 ? "" : "s"}
+              {attentionCount > 0 && (
+                <>
+                  {" "}
+                  · <strong>{attentionCount}</strong> need attention
+                </>
+              )}
+            </span>
+          </div>
+        </div>
         <div className="topbar-inner">
           <Link href="/" className="brand">
             <span className="brand-mark" aria-hidden />
@@ -38,7 +59,7 @@ export function AppShell({
           </div>
         </div>
       </header>
-      <main className="main">
+      <main className="main page-enter">
         {(title || subtitle) && (
           <div className="page-header">
             {eyebrow && <span className="page-eyebrow">{eyebrow}</span>}

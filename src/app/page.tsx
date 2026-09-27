@@ -23,32 +23,43 @@ export default function HomePage() {
       title="Operations control board"
       subtitle="Intake, triage, and dual approval with SLA badges on every open ticket."
     >
-      <div className="hero-grid">
-        <section className="card card-accent">
-          <h2>Queue snapshot</h2>
-          <p className="muted">
-            Counts refresh from the browser-local store — same data as the requests list and detail
-            actions.
-          </p>
-          <div className="stat-grid">
-            <div className="stat stat-accent">
-              <strong>{open.length}</strong>
-              <span>Open requests</span>
-            </div>
-            <div className="stat">
-              <strong>{awaitingApproval.length}</strong>
-              <span>Awaiting approval</span>
-            </div>
-            <div className="stat stat-warn">
-              <strong>{atRisk.length}</strong>
-              <span>SLA at risk</span>
-            </div>
-            <div className="stat stat-danger">
-              <strong>{breached.length}</strong>
-              <span>SLA breached</span>
-            </div>
+      <section className="board-hero" aria-label="Queue snapshot">
+        <div className="board-hero-head">
+          <div>
+            <h2>Queue snapshot</h2>
+            <p className="muted">
+              Counts refresh from the browser-local store — same data as the requests list and
+              detail actions.
+            </p>
           </div>
-          <p className="quick-links muted">
+          <p className="muted" style={{ margin: 0, fontSize: "0.82rem", maxWidth: "28ch" }}>
+            Demo path: intake → triage → dual approval → breach visibility on{" "}
+            <Link href="/requests/detail?id=SR-0975" className="row-link">
+              SR-0975
+            </Link>
+            .
+          </p>
+        </div>
+        <div className="kpi-rail">
+          <div className="kpi-cell kpi-cell-accent">
+            <strong>{open.length}</strong>
+            <span>Open requests</span>
+          </div>
+          <div className="kpi-cell">
+            <strong>{awaitingApproval.length}</strong>
+            <span>Awaiting approval</span>
+          </div>
+          <div className="kpi-cell kpi-cell-warn">
+            <strong>{atRisk.length}</strong>
+            <span>SLA at risk</span>
+          </div>
+          <div className="kpi-cell kpi-cell-danger">
+            <strong>{breached.length}</strong>
+            <span>SLA breached</span>
+          </div>
+        </div>
+        <div className="board-hero-foot">
+          <p className="quick-links muted" style={{ margin: 0 }}>
             Quick views:{" "}
             <Link href="/requests?quick=attention">Needs attention</Link>
             {" · "}
@@ -56,30 +67,18 @@ export default function HomePage() {
             {" · "}
             <Link href="/requests?quick=open_p1">Open P1</Link>
           </p>
-        </section>
-        <section className="card">
-          <h2>Demo walkthrough</h2>
-          <p className="muted">Three minutes to show intake → approval → breach visibility.</p>
-          <ol className="demo-steps">
-            <li>Create a P1 from <strong>New request</strong>, then triage on the detail page.</li>
-            <li>Approve as manager, then director.</li>
-            <li>
-              Open seeded <Link href="/requests/detail?id=SR-0975">SR-0975</Link> for a breached
-              submitted ticket.
-            </li>
-          </ol>
-          <p style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <div className="board-hero-actions">
             <Link href="/requests/new" className="button">
               Start new request
             </Link>
             <Link href="/requests" className="button button-ghost">
               Full queue
             </Link>
-          </p>
-        </section>
-      </div>
+          </div>
+        </div>
+      </section>
 
-      <div className="dashboard-grid">
+      <div className="board-split">
         <section>
           <div className="table-toolbar">
             <h2>Recent requests</h2>
