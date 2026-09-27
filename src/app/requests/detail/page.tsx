@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { AppShell } from "@/components/AppShell";
 import { CopyButton } from "@/components/CopyButton";
 import { CopyRequestLink } from "@/components/CopyRequestLink";
@@ -7,16 +10,35 @@ import { RequestWorkflowPanel } from "@/components/RequestWorkflowPanel";
 import { SlaDetail } from "@/components/SlaBadge";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Timeline } from "@/components/Timeline";
-import { getRequest } from "@/lib/store";
+import { useFlowgate } from "@/lib/flowgate-store";
 
-export default async function RequestDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const request = getRequest(id);
-  if (!request) notFound();
+function RequestDetailContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id") ?? "";
+  const { getRequest } = useFlowgate();
+  const request = id ? getRequest(id) : undefined;
+
+  if (!id) {
+    return (
+      <AppShell eyebrow="Detail">
+        <p className="muted">Missing request id. Open a ticket from the queue.</p>
+        <Link href="/requests" className="button">
+          Back to queue
+        </Link>
+      </AppShell>
+    );
+  }
+
+  if (!request) {
+    return (
+      <AppShell eyebrow={id}>
+        <p className="muted">Request not found in this browser session.</p>
+        <Link href="/requests" className="button">
+          Back to queue
+        </Link>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell eyebrow={request.id}>
@@ -79,5 +101,13 @@ export default async function RequestDetailPage({
         </div>
       </div>
     </AppShell>
+  );
+}
+
+export default function RequestDetailPage() {
+  return (
+    <Suspense fallback={<p className="muted">Loading request…</p>}>
+      <RequestDetailContent />
+    </Suspense>
   );
 }

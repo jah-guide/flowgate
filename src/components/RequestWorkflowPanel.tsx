@@ -1,14 +1,23 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { approveAction, rejectAction, triageAction } from "@/lib/actions";
+import { useFlowgate } from "@/lib/flowgate-store";
 import type { RequestStatus } from "@/lib/types";
 
 function confirmOrCancel(message: string): boolean {
   return window.confirm(message);
 }
 
+function actorForRole(role: string): string {
+  return role === "manager"
+    ? "Line Manager (demo)"
+    : role === "director"
+      ? "Director (demo)"
+      : role;
+}
+
 export function RequestWorkflowPanel({ id, status }: { id: string; status: RequestStatus }) {
+  const { triageRequest, approveRequest, rejectRequest } = useFlowgate();
   const triageRef = useRef<HTMLFormElement>(null);
   const approveRef = useRef<HTMLFormElement>(null);
   const rejectRef = useRef<HTMLFormElement>(null);
@@ -61,16 +70,19 @@ export function RequestWorkflowPanel({ id, status }: { id: string; status: Reque
         </p>
         <form
           ref={triageRef}
-          action={triageAction.bind(null, id)}
           className="stack-form"
           onSubmit={(e) => {
+            e.preventDefault();
             if (
               !confirmOrCancel(
                 "Complete triage and route this request to manager approval?",
               )
             ) {
-              e.preventDefault();
+              return;
             }
+            const note =
+              String(new FormData(e.currentTarget).get("note") ?? "").trim() || undefined;
+            triageRequest(id, note);
           }}
         >
           <label>
@@ -99,12 +111,15 @@ export function RequestWorkflowPanel({ id, status }: { id: string; status: Reque
       <div className="action-grid">
         <form
           ref={approveRef}
-          action={approveAction.bind(null, id)}
           className="stack-form"
           onSubmit={(e) => {
+            e.preventDefault();
             if (!confirmOrCancel(`Approve as ${role} and advance this request?`)) {
-              e.preventDefault();
+              return;
             }
+            const formData = new FormData(e.currentTarget);
+            const note = String(formData.get("note") ?? "").trim() || undefined;
+            approveRequest(id, actorForRole(role), note);
           }}
         >
           <input type="hidden" name="role" value={role} />
@@ -118,12 +133,15 @@ export function RequestWorkflowPanel({ id, status }: { id: string; status: Reque
         </form>
         <form
           ref={rejectRef}
-          action={rejectAction.bind(null, id)}
           className="stack-form"
           onSubmit={(e) => {
+            e.preventDefault();
             if (!confirmOrCancel(`Reject this request as ${role}? This cannot be undone.`)) {
-              e.preventDefault();
+              return;
             }
+            const formData = new FormData(e.currentTarget);
+            const note = String(formData.get("note") ?? "").trim() || undefined;
+            rejectRequest(id, actorForRole(role), note);
           }}
         >
           <input type="hidden" name="role" value={role} />

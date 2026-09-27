@@ -1,24 +1,26 @@
 "use client";
 
-import { resetDemoAction } from "@/lib/actions";
+import { useFlowgate } from "@/lib/flowgate-store";
 
 export function ResetDemoButton() {
+  const { resetDemoData } = useFlowgate();
+
   return (
-    <form
-      action={resetDemoAction}
-      onSubmit={(e) => {
+    <button
+      type="button"
+      className="link-button"
+      onClick={() => {
         if (
           !window.confirm(
             "Reset all demo data to the seeded queue? User-created requests will be removed.",
           )
         ) {
-          e.preventDefault();
+          return;
         }
+        resetDemoData();
       }}
     >
-      <button type="submit" className="link-button">
-        Reset demo data
-      </button>
-    </form>
+      Reset demo data
+    </button>
   );
 }

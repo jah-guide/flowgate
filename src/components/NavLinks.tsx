@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 function requestsActive(pathname: string) {
   if (pathname === "/requests") return true;
-  if (pathname.startsWith("/requests/") && !pathname.startsWith("/requests/new")) return true;
+  if (pathname.startsWith("/requests/detail")) return true;
   return false;
 }
 

@@ -75,12 +75,15 @@ export function RequestTable({
           {requests.map((r) => (
             <tr key={r.id}>
               <td>
-                <Link href={`/requests/${r.id}`} className="row-link">
+                <Link href={`/requests/detail?id=${encodeURIComponent(r.id)}`} className="row-link">
                   {r.id}
                 </Link>
               </td>
               <td>
-                <Link href={`/requests/${r.id}`} className="row-link title-cell">
+                <Link
+                  href={`/requests/detail?id=${encodeURIComponent(r.id)}`}
+                  className="row-link title-cell"
+                >
                   {r.title}
                 </Link>
                 <span className="muted">{r.category}</span>

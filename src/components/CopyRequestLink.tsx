@@ -2,11 +2,17 @@
 
 import { useState } from "react";
 
+function detailUrl(id: string): string {
+  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const path = `${base}/requests/detail`.replace(/\/{2,}/g, "/");
+  return `${window.location.origin}${path}?id=${encodeURIComponent(id)}`;
+}
+
 export function CopyRequestLink({ id }: { id: string }) {
   const [copied, setCopied] = useState(false);
 
   async function onCopy() {
-    const value = `${window.location.origin}/requests/${id}`;
+    const value = detailUrl(id);
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);

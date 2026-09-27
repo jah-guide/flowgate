@@ -32,7 +32,7 @@ function readDraft(): DraftFields {
   }
 }
 
-export function NewRequestForm({ action }: { action: (formData: FormData) => void }) {
+export function NewRequestForm({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
   const [draft, setDraft] = useState<DraftFields>(DEFAULT_DRAFT);
   const [hydrated, setHydrated] = useState(false);
 
@@ -56,7 +56,13 @@ export function NewRequestForm({ action }: { action: (formData: FormData) => voi
       <p className="muted form-draft-hint">
         Draft fields save locally in this browser until you submit or clear the draft.
       </p>
-      <form action={action} className="stack-form">
+      <form
+        className="stack-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit(new FormData(e.currentTarget));
+        }}
+      >
         <div className="form-section">
           <h3>What &amp; why</h3>
           <div className="form-grid">

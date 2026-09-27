@@ -1,10 +1,13 @@
+"use client";
+
 import { Suspense } from "react";
 import { AppShell } from "@/components/AppShell";
 import { RequestQueue } from "@/components/RequestQueue";
+import { useFlowgate } from "@/lib/flowgate-store";
 import { getSlaStatus } from "@/lib/sla";
-import { listRequests } from "@/lib/store";
 
 export default function RequestsPage() {
+  const { listRequests } = useFlowgate();
   const requests = listRequests();
   const open = requests.filter((r) => r.status !== "approved" && r.status !== "rejected");
   const atRisk = open.filter((r) => getSlaStatus(r) === "at_risk" || getSlaStatus(r) === "breached");

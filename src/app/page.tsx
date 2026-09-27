@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import { AppShell } from "@/components/AppShell";
 import { RequestTable } from "@/components/RequestTable";
+import { useFlowgate } from "@/lib/flowgate-store";
 import { getSlaStatus } from "@/lib/sla";
-import { listRequests } from "@/lib/store";
 
 export default function HomePage() {
+  const { listRequests } = useFlowgate();
   const requests = listRequests();
   const open = requests.filter((r) => r.status !== "approved" && r.status !== "rejected");
   const breached = open.filter((r) => getSlaStatus(r) === "breached");
@@ -24,7 +27,7 @@ export default function HomePage() {
         <section className="card card-accent">
           <h2>Queue snapshot</h2>
           <p className="muted">
-            Counts refresh from the in-memory store — same data as the requests list and detail
+            Counts refresh from the browser-local store — same data as the requests list and detail
             actions.
           </p>
           <div className="stat-grid">
@@ -60,7 +63,10 @@ export default function HomePage() {
           <ol className="demo-steps">
             <li>Create a P1 from <strong>New request</strong>, then triage on the detail page.</li>
             <li>Approve as manager, then director.</li>
-            <li>Open seeded <strong>SR-0975</strong> for a breached submitted ticket.</li>
+            <li>
+              Open seeded <Link href="/requests/detail?id=SR-0975">SR-0975</Link> for a breached
+              submitted ticket.
+            </li>
           </ol>
           <p style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             <Link href="/requests/new" className="button">

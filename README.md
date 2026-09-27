@@ -1,5 +1,7 @@
 # FlowGate — SLA service-request workflow
 
+**Live demo:** [jah-guide.github.io/flowgate](https://jah-guide.github.io/flowgate/)
+
 **Systems Analyst case study · Next.js prototype**
 
 FlowGate models **intake → triage → multi-step approval** with **live SLA posture** (On Track / At Risk / Breached) on a dark ops control-board UI.
@@ -37,7 +39,7 @@ Service requests arrive by email and chat. Approvals live in spreadsheets. Leade
 
 ## Working demo
 
-In-memory Next.js App Router prototype (no production auth or database).
+Browser-local Next.js App Router prototype (static export on GitHub Pages — no production auth or database).
 
 ```bash
 git clone https://github.com/jah-guide/flowgate.git
@@ -64,8 +66,8 @@ npm run build
 
 ## Tech stack
 
-- Next.js 15 (App Router) + TypeScript
-- React Server Components + server actions for workflow transitions
+- Next.js 15 (App Router) + TypeScript, static export for GitHub Pages
+- Client-side in-memory store (localStorage) for workflow transitions
 - Custom CSS — deep slate control-board theme (teal + amber accents)
 
 ## Portfolio note

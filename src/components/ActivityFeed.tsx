@@ -24,7 +24,10 @@ export function ActivityFeed({ requests }: { requests: ServiceRequest[] }) {
         {items.map((item) => (
           <li key={item.id}>
             <div className="activity-meta">
-              <Link href={`/requests/${item.requestId}`} className="row-link">
+              <Link
+                href={`/requests/detail?id=${encodeURIComponent(item.requestId)}`}
+                className="row-link"
+              >
                 {item.requestId}
               </Link>
               <time dateTime={item.event.at}>{new Date(item.event.at).toLocaleString()}</time>

@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { countAttentionRequests } from "@/lib/queue-filters";
-import { listRequests } from "@/lib/store";
+import { useFlowgate } from "@/lib/flowgate-store";
 import { NavLinks } from "./NavLinks";
 import { PreferenceToggle } from "./PreferenceToggle";
 import { ResetDemoButton } from "./ResetDemoButton";
@@ -16,6 +18,7 @@ export function AppShell({
   subtitle?: string;
   eyebrow?: string;
 }) {
+  const { listRequests } = useFlowgate();
   const attentionCount = countAttentionRequests(listRequests());
 
   return (
@@ -46,7 +49,7 @@ export function AppShell({
         {children}
       </main>
       <footer className="footer">
-        <span>Portfolio demo — in-memory store, no production auth</span>
+        <span>Portfolio demo — browser-local store, no production auth</span>
         <ResetDemoButton />
       </footer>
     </div>

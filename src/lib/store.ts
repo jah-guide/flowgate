@@ -2,19 +2,11 @@ import { SEED_REQUESTS } from "./seed";
 import type { CreateRequestInput, ServiceRequest, TimelineEvent } from "./types";
 import { computeSlaDueAt } from "./sla";
 
-const globalStore = globalThis as typeof globalThis & {
-  __flowgateRequests?: ServiceRequest[];
-};
-
-function getStore(): ServiceRequest[] {
-  if (!globalStore.__flowgateRequests) {
-    globalStore.__flowgateRequests = structuredClone(SEED_REQUESTS);
-  }
-  return globalStore.__flowgateRequests;
+export function initialRequests(): ServiceRequest[] {
+  return structuredClone(SEED_REQUESTS);
 }
 
-function nextId(): string {
-  const store = getStore();
+function nextId(store: ServiceRequest[]): string {
   const nums = store
     .map((r) => parseInt(r.id.replace("SR-", ""), 10))
     .filter((n) => !Number.isNaN(n));
@@ -36,20 +28,23 @@ function appendEvent(
   });
 }
 
-export function listRequests(): ServiceRequest[] {
-  return [...getStore()].sort(
+export function listRequests(store: ServiceRequest[]): ServiceRequest[] {
+  return [...store].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 }
 
-export function getRequest(id: string): ServiceRequest | undefined {
-  return getStore().find((r) => r.id === id);
+export function getRequest(store: ServiceRequest[], id: string): ServiceRequest | undefined {
+  return store.find((r) => r.id === id);
 }
 
-export function createRequest(input: CreateRequestInput): ServiceRequest {
+export function createRequest(
+  store: ServiceRequest[],
+  input: CreateRequestInput,
+): { store: ServiceRequest[]; request: ServiceRequest } {
   const createdAt = new Date().toISOString();
   const request: ServiceRequest = {
-    id: nextId(),
+    id: nextId(store),
     title: input.title.trim(),
     description: input.description.trim(),
     category: input.category,
@@ -68,85 +63,96 @@ export function createRequest(input: CreateRequestInput): ServiceRequest {
     label: "Request submitted",
   });
 
-  getStore().unshift(request);
-  return request;
+  return { store: [request, ...store], request };
 }
 
-export function triageRequest(id: string, note?: string): ServiceRequest {
-  const request = getRequest(id);
-  if (!request) throw new Error("Request not found");
-  if (request.status !== "submitted") {
-    throw new Error("Only submitted requests can be triaged");
-  }
-
-  appendEvent(request, {
-    type: "triaged",
-    actor: "Ops Analyst (demo)",
-    label: `Triaged as ${request.priority} — ${request.category}`,
-    note,
-  });
-  appendEvent(request, {
-    type: "routed",
-    actor: "System",
-    label: "Routed to line manager approval",
-  });
-  request.status = "pending_manager";
-
-  return request;
-}
-
-export function approveRequest(id: string, actor: string, note?: string): ServiceRequest {
-  const request = getRequest(id);
-  if (!request) throw new Error("Request not found");
-
-  if (request.status === "pending_manager") {
-    appendEvent(request, {
-      type: "approved",
-      actor,
-      label: "Manager approved",
+export function triageRequest(
+  store: ServiceRequest[],
+  id: string,
+  note?: string,
+): ServiceRequest[] {
+  return store.map((request) => {
+    if (request.id !== id) return request;
+    if (request.status !== "submitted") {
+      throw new Error("Only submitted requests can be triaged");
+    }
+    const next = structuredClone(request);
+    appendEvent(next, {
+      type: "triaged",
+      actor: "Ops Analyst (demo)",
+      label: `Triaged as ${next.priority} — ${next.category}`,
       note,
     });
-    request.status = "pending_director";
-    appendEvent(request, {
+    appendEvent(next, {
       type: "routed",
       actor: "System",
-      label: "Routed to director approval",
+      label: "Routed to line manager approval",
     });
-    return request;
-  }
+    next.status = "pending_manager";
+    return next;
+  });
+}
 
-  if (request.status === "pending_director") {
-    appendEvent(request, {
-      type: "approved",
+export function approveRequest(
+  store: ServiceRequest[],
+  id: string,
+  actor: string,
+  note?: string,
+): ServiceRequest[] {
+  return store.map((request) => {
+    if (request.id !== id) return request;
+    const next = structuredClone(request);
+
+    if (next.status === "pending_manager") {
+      appendEvent(next, {
+        type: "approved",
+        actor,
+        label: "Manager approved",
+        note,
+      });
+      next.status = "pending_director";
+      appendEvent(next, {
+        type: "routed",
+        actor: "System",
+        label: "Routed to director approval",
+      });
+      return next;
+    }
+
+    if (next.status === "pending_director") {
+      appendEvent(next, {
+        type: "approved",
+        actor,
+        label: "Director approved — ready for fulfillment",
+        note,
+      });
+      next.status = "approved";
+      return next;
+    }
+
+    throw new Error("Request is not awaiting approval");
+  });
+}
+
+export function rejectRequest(
+  store: ServiceRequest[],
+  id: string,
+  actor: string,
+  note?: string,
+): ServiceRequest[] {
+  return store.map((request) => {
+    if (request.id !== id) return request;
+    if (request.status !== "pending_manager" && request.status !== "pending_director") {
+      throw new Error("Request is not awaiting approval");
+    }
+    const next = structuredClone(request);
+    appendEvent(next, {
+      type: "rejected",
       actor,
-      label: "Director approved — ready for fulfillment",
+      label: "Approval rejected",
       note,
     });
-    request.status = "approved";
-    return request;
-  }
-
-  throw new Error("Request is not awaiting approval");
-}
-
-export function rejectRequest(id: string, actor: string, note?: string): ServiceRequest {
-  const request = getRequest(id);
-  if (!request) throw new Error("Request not found");
-
-  if (request.status !== "pending_manager" && request.status !== "pending_director") {
-    throw new Error("Request is not awaiting approval");
-  }
-
-  appendEvent(request, {
-    type: "rejected",
-    actor,
-    label: "Approval rejected",
-    note,
+    next.status = "rejected";
+    return next;
   });
-  request.status = "rejected";
-  return request;
-}
-
-export function resetDemoData(): void {
-  globalStore.__flowgateRequests = structuredClone(SEED_REQUESTS);
 }
