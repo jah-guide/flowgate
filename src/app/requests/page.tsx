@@ -1,6 +1,6 @@
-import Link from "next/link";
+import { Suspense } from "react";
 import { AppShell } from "@/components/AppShell";
-import { RequestTable } from "@/components/RequestTable";
+import { RequestQueue } from "@/components/RequestQueue";
 import { getSlaStatus } from "@/lib/sla";
 import { listRequests } from "@/lib/store";
 
@@ -13,17 +13,14 @@ export default function RequestsPage() {
     <AppShell
       eyebrow="Queue"
       title="Service requests"
-      subtitle="Newest first. SLA posture updates on each refresh — open a row for timeline and approval actions."
+      subtitle="Search and filter the queue, export CSV, and open a row for timeline and approval actions."
     >
-      <div className="table-toolbar">
-        <p className="muted" style={{ margin: 0 }}>
-          {requests.length} total · {open.length} open · {atRisk.length} need attention
-        </p>
-        <Link href="/requests/new" className="button">
-          New request
-        </Link>
-      </div>
-      <RequestTable requests={requests} />
+      <p className="muted queue-page-summary">
+        {requests.length} total · {open.length} open · {atRisk.length} need attention
+      </p>
+      <Suspense fallback={<p className="muted">Loading queue filters…</p>}>
+        <RequestQueue requests={requests} />
+      </Suspense>
     </AppShell>
   );
 }
