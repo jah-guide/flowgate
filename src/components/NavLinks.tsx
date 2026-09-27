@@ -9,7 +9,7 @@ function requestsActive(pathname: string) {
   return false;
 }
 
-export function NavLinks() {
+export function NavLinks({ attentionCount = 0 }: { attentionCount?: number }) {
   const pathname = usePathname();
 
   return (
@@ -19,6 +19,11 @@ export function NavLinks() {
       </Link>
       <Link href="/requests" className={requestsActive(pathname) ? "nav-active" : undefined}>
         Requests
+        {attentionCount > 0 && (
+          <span className="nav-badge" aria-label={`${attentionCount} need SLA attention`}>
+            {attentionCount}
+          </span>
+        )}
       </Link>
       <Link
         href="/requests/new"

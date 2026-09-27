@@ -1,6 +1,9 @@
 import Link from "next/link";
-import { resetDemoAction } from "@/lib/actions";
+import { countAttentionRequests } from "@/lib/queue-filters";
+import { listRequests } from "@/lib/store";
 import { NavLinks } from "./NavLinks";
+import { PreferenceToggle } from "./PreferenceToggle";
+import { ResetDemoButton } from "./ResetDemoButton";
 
 export function AppShell({
   children,
@@ -13,6 +16,8 @@ export function AppShell({
   subtitle?: string;
   eyebrow?: string;
 }) {
+  const attentionCount = countAttentionRequests(listRequests());
+
   return (
     <div className="shell">
       <header className="topbar">
@@ -24,7 +29,10 @@ export function AppShell({
               <small>Ops control board</small>
             </span>
           </Link>
-          <NavLinks />
+          <div className="topbar-actions">
+            <PreferenceToggle />
+            <NavLinks attentionCount={attentionCount} />
+          </div>
         </div>
       </header>
       <main className="main">
@@ -39,11 +47,7 @@ export function AppShell({
       </main>
       <footer className="footer">
         <span>Portfolio demo — in-memory store, no production auth</span>
-        <form action={resetDemoAction}>
-          <button type="submit" className="link-button">
-            Reset demo data
-          </button>
-        </form>
+        <ResetDemoButton />
       </footer>
     </div>
   );
