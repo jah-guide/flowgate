@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const DRAFT_KEY = "flowgate-new-request-draft";
 
@@ -32,9 +32,21 @@ function readDraft(): DraftFields {
   }
 }
 
+function completionScore(draft: DraftFields): number {
+  const fields = [
+    draft.title.trim(),
+    draft.description.trim(),
+    draft.requester.trim(),
+    draft.department.trim(),
+  ];
+  const filled = fields.filter(Boolean).length;
+  return Math.round((filled / fields.length) * 100);
+}
+
 export function NewRequestForm({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
   const [draft, setDraft] = useState<DraftFields>(DEFAULT_DRAFT);
   const [hydrated, setHydrated] = useState(false);
+  const progress = useMemo(() => completionScore(draft), [draft]);
 
   useEffect(() => {
     setDraft(readDraft());
@@ -54,13 +66,23 @@ export function NewRequestForm({ onSubmit }: { onSubmit: (formData: FormData) =>
   return (
     <section className="card form-card card-accent">
       <div className="form-card-head">
-        <h2>Intake form</h2>
-        <p className="muted form-draft-hint">
-          Draft fields save locally in this browser until you submit or clear the draft.
-        </p>
+        <div className="form-card-head-row">
+          <div>
+            <h2>Intake form</h2>
+            <p className="muted form-draft-hint">
+              Draft fields save locally in this browser until you submit or clear the draft.
+            </p>
+          </div>
+          <div className="form-progress" aria-label={`Form ${progress}% complete`}>
+            <span className="form-progress-label">{progress}% ready</span>
+            <div className="form-progress-track">
+              <span className="form-progress-fill" style={{ width: `${progress}%` }} />
+            </div>
+          </div>
+        </div>
       </div>
       <form
-        className="stack-form"
+        className="stack-form intake-form"
         onSubmit={(e) => {
           e.preventDefault();
           onSubmit(new FormData(e.currentTarget));

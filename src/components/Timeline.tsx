@@ -1,4 +1,20 @@
-import type { TimelineEvent } from "@/lib/types";
+import type { TimelineEvent, TimelineEventType } from "@/lib/types";
+
+function dotClass(type: TimelineEventType): string {
+  switch (type) {
+    case "created":
+      return "timeline-dot-muted";
+    case "triaged":
+    case "routed":
+      return "timeline-dot-amber";
+    case "approved":
+      return "timeline-dot-accent";
+    case "rejected":
+      return "timeline-dot-danger";
+    default:
+      return "timeline-dot-muted";
+  }
+}
 
 export function Timeline({ events }: { events: TimelineEvent[] }) {
   if (!events.length) {
@@ -8,8 +24,11 @@ export function Timeline({ events }: { events: TimelineEvent[] }) {
   return (
     <ol className="timeline">
       {events.map((event, index) => (
-        <li key={event.id} className={index === events.length - 1 ? "timeline-current" : ""}>
-          <div className="timeline-dot" aria-hidden />
+        <li
+          key={event.id}
+          className={index === events.length - 1 ? "timeline-current" : undefined}
+        >
+          <div className={`timeline-dot ${dotClass(event.type)}`} aria-hidden />
           <div className="timeline-body">
             <div className="timeline-head">
               <strong>
