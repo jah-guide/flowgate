@@ -6,6 +6,7 @@ import { useFlowgate } from "@/lib/flowgate-store";
 import { NavLinks } from "./NavLinks";
 import { PreferenceToggle } from "./PreferenceToggle";
 import { ResetDemoButton } from "./ResetDemoButton";
+import { StatusStripClock } from "./StatusStripClock";
 
 export function AppShell({
   children,
@@ -19,8 +20,9 @@ export function AppShell({
   eyebrow?: string;
 }) {
   const { listRequests } = useFlowgate();
-  const attentionCount = countAttentionRequests(listRequests());
-  const openCount = listRequests().filter(
+  const requests = listRequests();
+  const attentionCount = countAttentionRequests(requests);
+  const openCount = requests.filter(
     (r) => r.status !== "approved" && r.status !== "rejected",
   ).length;
 
@@ -35,6 +37,10 @@ export function AppShell({
               Local store · SLA engine live
             </span>
             <span className="topbar-status-meta">
+              <StatusStripClock />
+              <span className="status-meta-divider" aria-hidden>
+                ·
+              </span>
               {openCount} open ticket{openCount === 1 ? "" : "s"}
               {attentionCount > 0 && (
                 <>
@@ -48,7 +54,7 @@ export function AppShell({
         <div className="topbar-inner">
           <Link href="/" className="brand">
             <span className="brand-mark" aria-hidden />
-            <span>
+            <span className="brand-copy">
               <strong>FlowGate</strong>
               <small>Ops control board</small>
             </span>
@@ -60,17 +66,23 @@ export function AppShell({
         </div>
       </header>
       <main className="main page-enter">
-        {(title || subtitle) && (
-          <div className="page-header">
+        {(title || subtitle || eyebrow) && (
+          <header className="page-header">
             {eyebrow && <span className="page-eyebrow">{eyebrow}</span>}
             {title && <h1>{title}</h1>}
             {subtitle && <p>{subtitle}</p>}
-          </div>
+            <div className="page-header-rule" aria-hidden />
+          </header>
         )}
         {children}
       </main>
       <footer className="footer">
-        <span>Portfolio demo — browser-local store, no production auth</span>
+        <div className="footer-copy">
+          <span>Portfolio demo — browser-local store, no production auth</span>
+          <span className="footer-hints muted">
+            Shortcuts: <kbd>/</kbd> search queue · <kbd>T</kbd> triage · <kbd>A</kbd> approve
+          </span>
+        </div>
         <ResetDemoButton />
       </footer>
     </div>

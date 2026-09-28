@@ -14,10 +14,14 @@ export function NavLinks({ attentionCount = 0 }: { attentionCount?: number }) {
 
   return (
     <nav className="nav" aria-label="Primary">
-      <Link href="/" className={pathname === "/" ? "nav-active" : undefined}>
+      <Link href="/" className={pathname === "/" ? "nav-active" : undefined} data-nav="board">
         Control board
       </Link>
-      <Link href="/requests" className={requestsActive(pathname) ? "nav-active" : undefined}>
+      <Link
+        href="/requests"
+        className={requestsActive(pathname) ? "nav-active" : undefined}
+        data-nav="queue"
+      >
         Requests
         {attentionCount > 0 && (
           <span className="nav-badge" aria-label={`${attentionCount} need SLA attention`}>
@@ -28,6 +32,7 @@ export function NavLinks({ attentionCount = 0 }: { attentionCount?: number }) {
       <Link
         href="/requests/new"
         className={`nav-cta${pathname === "/requests/new" ? " nav-active" : ""}`}
+        data-nav="new"
       >
         New request
       </Link>
