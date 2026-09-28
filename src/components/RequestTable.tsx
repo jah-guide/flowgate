@@ -39,7 +39,8 @@ export function RequestTable({
     return (
       <div className="empty">
         <div className="empty-graphic empty-graphic-queue" aria-hidden />
-        <p>No service requests in the queue yet.</p>
+        <h3>Queue is clear</h3>
+        <p>No service requests in the queue yet — start intake to begin the SLA clock.</p>
         <Link href="/requests/new" className="button">
           Create the first request
         </Link>
@@ -53,16 +54,16 @@ export function RequestTable({
         <caption>{caption}</caption>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>SLA posture</th>
-            {!compact && <th>SLA clock</th>}
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Priority</th>
+            <th scope="col">Status</th>
+            <th scope="col">SLA posture</th>
+            {!compact && <th scope="col">SLA clock</th>}
             {!compact && (
               <>
-                <th>Requester</th>
-                <th>Opened</th>
+                <th scope="col">Requester</th>
+                <th scope="col">Opened</th>
               </>
             )}
           </tr>

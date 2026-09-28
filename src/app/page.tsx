@@ -32,7 +32,7 @@ export default function HomePage() {
               detail actions.
             </p>
           </div>
-          <p className="muted" style={{ margin: 0, fontSize: "0.82rem", maxWidth: "28ch" }}>
+          <p className="board-hero-aside muted">
             Demo path: intake → triage → dual approval → breach visibility on{" "}
             <Link href="/requests/detail?id=SR-0975" className="row-link">
               SR-0975
@@ -42,24 +42,28 @@ export default function HomePage() {
         </div>
         <div className="kpi-rail">
           <div className="kpi-cell kpi-cell-accent">
+            <span className="kpi-accent-bar" aria-hidden />
             <strong>{open.length}</strong>
             <span>Open requests</span>
           </div>
           <div className="kpi-cell">
+            <span className="kpi-accent-bar kpi-accent-bar-neutral" aria-hidden />
             <strong>{awaitingApproval.length}</strong>
             <span>Awaiting approval</span>
           </div>
           <div className="kpi-cell kpi-cell-warn">
+            <span className="kpi-accent-bar kpi-accent-bar-warn" aria-hidden />
             <strong>{atRisk.length}</strong>
             <span>SLA at risk</span>
           </div>
           <div className="kpi-cell kpi-cell-danger">
+            <span className="kpi-accent-bar kpi-accent-bar-danger" aria-hidden />
             <strong>{breached.length}</strong>
             <span>SLA breached</span>
           </div>
         </div>
         <div className="board-hero-foot">
-          <p className="quick-links muted" style={{ margin: 0 }}>
+          <p className="quick-links muted">
             Quick views:{" "}
             <Link href="/requests?quick=attention">Needs attention</Link>
             {" · "}
@@ -79,9 +83,12 @@ export default function HomePage() {
       </section>
 
       <div className="board-split">
-        <section>
+        <section className="surface-panel">
           <div className="table-toolbar">
-            <h2>Recent requests</h2>
+            <div>
+              <h2>Recent requests</h2>
+              <p className="muted surface-panel-sub">Latest tickets across the local queue</p>
+            </div>
             <Link href="/requests" className="row-link">
               View all →
             </Link>

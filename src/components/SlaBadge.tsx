@@ -18,7 +18,7 @@ export function SlaBadge({ request }: { request: ServiceRequest }) {
       aria-label={`SLA ${LABELS[status]}: ${formatSlaRemaining(request)}`}
     >
       <span className="badge-dot" aria-hidden />
-      {LABELS[status]}
+      <span className="badge-label">{LABELS[status]}</span>
     </span>
   );
 }

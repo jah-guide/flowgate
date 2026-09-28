@@ -73,94 +73,105 @@ export function RequestQueue({ requests }: { requests: ServiceRequest[] }) {
   return (
     <>
       <div className="queue-toolbar">
-        <div className="queue-toolbar-row">
-          <label className="search-field">
-            <span className="visually-hidden">Search requests</span>
-            <input
-              ref={searchRef}
-              type="search"
-              placeholder="Search ID, title, requester… (press /)"
-              value={filters.query}
-              onChange={(e) => patch({ query: e.target.value, quick: "none" })}
-              autoComplete="off"
-            />
-          </label>
-          <div className="queue-toolbar-actions">
-            <button type="button" className="button button-ghost" onClick={exportQueue}>
-              Export CSV
-            </button>
-            <Link href="/requests/new" className="button">
-              New request
-            </Link>
+        <div className="queue-toolbar-section">
+          <span className="queue-toolbar-label">Search &amp; export</span>
+          <div className="queue-toolbar-row">
+            <label className="search-field">
+              <span className="visually-hidden">Search requests</span>
+              <input
+                ref={searchRef}
+                type="search"
+                placeholder="Search ID, title, requester… (press /)"
+                value={filters.query}
+                onChange={(e) => patch({ query: e.target.value, quick: "none" })}
+                autoComplete="off"
+              />
+            </label>
+            <div className="queue-toolbar-actions">
+              <button type="button" className="button button-ghost" onClick={exportQueue}>
+                Export CSV
+              </button>
+              <Link href="/requests/new" className="button">
+                New request
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="preset-row" role="group" aria-label="Quick queue views">
-          {(Object.keys(QUEUE_PRESETS) as Array<keyof typeof QUEUE_PRESETS>).map((key) => (
-            <button
-              key={key}
-              type="button"
-              className={`chip-button${filters.quick === key ? " chip-button-active" : ""}`}
-              onClick={() => applyPreset(key)}
-            >
-              {QUEUE_PRESETS[key].label}
-            </button>
-          ))}
+        <div className="queue-toolbar-section">
+          <span className="queue-toolbar-label">Quick views</span>
+          <div className="preset-row" role="group" aria-label="Quick queue views">
+            {(Object.keys(QUEUE_PRESETS) as Array<keyof typeof QUEUE_PRESETS>).map((key) => (
+              <button
+                key={key}
+                type="button"
+                className={`chip-button${filters.quick === key ? " chip-button-active" : ""}`}
+                onClick={() => applyPreset(key)}
+              >
+                {QUEUE_PRESETS[key].label}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="filter-chips" role="group" aria-label="Queue filters">
-          <select
-            aria-label="Filter by workflow status"
-            value={filters.status}
-            onChange={(e) =>
-              patch({ status: e.target.value as QueueFilters["status"], quick: "none" })
-            }
-          >
-            <option value="all">All statuses</option>
-            <option value="open">Open only</option>
-            <option value="submitted">Submitted</option>
-            <option value="triaged">Triaged</option>
-            <option value="pending_manager">Manager approval</option>
-            <option value="pending_director">Director approval</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-          </select>
-          <select
-            aria-label="Filter by priority"
-            value={filters.priority}
-            onChange={(e) =>
-              patch({ priority: e.target.value as QueueFilters["priority"], quick: "none" })
-            }
-          >
-            <option value="all">All priorities</option>
-            <option value="P1">P1</option>
-            <option value="P2">P2</option>
-            <option value="P3">P3</option>
-          </select>
-          <select
-            aria-label="Filter by SLA posture"
-            value={filters.sla}
-            onChange={(e) => patch({ sla: e.target.value as QueueFilters["sla"], quick: "none" })}
-          >
-            <option value="all">All SLA</option>
-            <option value="on_track">On track</option>
-            <option value="at_risk">At risk</option>
-            <option value="breached">Breached</option>
-          </select>
-          <select
-            aria-label="Sort queue"
-            value={filters.sort}
-            onChange={(e) => patch({ sort: e.target.value as QueueFilters["sort"] })}
-          >
-            <option value="newest">Newest first</option>
-            <option value="sla_urgency">SLA due soonest</option>
-          </select>
-          {activeFilterCount > 0 && (
-            <button type="button" className="link-button" onClick={clearFilters}>
-              Clear filters ({activeFilterCount})
-            </button>
-          )}
+        <div className="queue-toolbar-section">
+          <span className="queue-toolbar-label">Filters</span>
+          <div className="filter-chips" role="group" aria-label="Queue filters">
+            <select
+              aria-label="Filter by workflow status"
+              value={filters.status}
+              onChange={(e) =>
+                patch({ status: e.target.value as QueueFilters["status"], quick: "none" })
+              }
+            >
+              <option value="all">All statuses</option>
+              <option value="open">Open only</option>
+              <option value="submitted">Submitted</option>
+              <option value="triaged">Triaged</option>
+              <option value="pending_manager">Manager approval</option>
+              <option value="pending_director">Director approval</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <select
+              aria-label="Filter by priority"
+              value={filters.priority}
+              onChange={(e) =>
+                patch({ priority: e.target.value as QueueFilters["priority"], quick: "none" })
+              }
+            >
+              <option value="all">All priorities</option>
+              <option value="P1">P1</option>
+              <option value="P2">P2</option>
+              <option value="P3">P3</option>
+            </select>
+            <select
+              aria-label="Filter by SLA posture"
+              value={filters.sla}
+              onChange={(e) =>
+                patch({ sla: e.target.value as QueueFilters["sla"], quick: "none" })
+              }
+            >
+              <option value="all">All SLA</option>
+              <option value="on_track">On track</option>
+              <option value="at_risk">At risk</option>
+              <option value="breached">Breached</option>
+            </select>
+            <select
+              aria-label="Sort queue"
+              value={filters.sort}
+              onChange={(e) => patch({ sort: e.target.value as QueueFilters["sort"] })}
+            >
+              <option value="newest">Newest first</option>
+              <option value="sla_urgency">SLA due soonest</option>
+            </select>
+            {activeFilterCount > 0 && (
+              <button type="button" className="link-button" onClick={clearFilters}>
+                Clear filters ({activeFilterCount})
+              </button>
+            )}
+          </div>
         </div>
         <p className="muted queue-summary">
-          Showing {filtered.length} of {requests.length} requests
+          Showing <strong>{filtered.length}</strong> of {requests.length} requests
         </p>
       </div>
       <RequestTable
